@@ -1,1 +1,30 @@
 # jewelry-shop
+
+Каталог ювелірних прикрас: Next.js + Payload CMS 3, PostgreSQL, Cloudflare R2, хостинг на Netlify.
+
+## Локальний запуск
+
+```sh
+cp .env.example .env   # задати PAYLOAD_SECRET
+npm install
+npm run db:up          # Postgres у Docker на порту 5434
+npm run dev
+```
+
+- Сайт: http://localhost:3000
+- Адмінка: http://localhost:3000/admin (перший вхід створює адміністратора)
+
+## Міграції
+
+Локально схема БД оновлюється автоматично. Після зміни колекцій створити міграцію:
+
+```sh
+npm run payload -- migrate:create <name>
+```
+
+У продакшні міграції застосовуються автоматично при старті.
+
+## Деплой (Netlify)
+
+Змінні середовища: `DATABASE_URL` (Neon), `PAYLOAD_SECRET`, `NEXT_PUBLIC_SERVER_URL`,
+`S3_BUCKET`, `S3_ENDPOINT`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` (Cloudflare R2).
