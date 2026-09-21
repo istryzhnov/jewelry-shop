@@ -38,4 +38,19 @@ test.describe('Admin Panel', () => {
     const editViewArtifact = page.locator('input[name="email"]')
     await expect(editViewArtifact).toBeVisible()
   })
+
+  test('shows seeded products with variant labels', async () => {
+    // Cold dev-mode compilation of list and edit views can take over 30s
+    test.setTimeout(120_000)
+    await page.goto('http://localhost:3000/admin/collections/products')
+    await expect(page.locator('h1', { hasText: 'Товари' }).first()).toBeVisible()
+
+    // The list view rewrites its URL after hydration, which would cancel an earlier click
+    await page.waitForURL(/limit=/)
+    await page.getByRole('link', { name: 'Срібна каблучка «Тонка лінія»' }).click()
+    await page.waitForURL(/\/admin\/collections\/products\/\d+/, { timeout: 60_000 })
+    await expect(page.locator('input[name="name"]')).toHaveValue('Срібна каблучка «Тонка лінія»')
+    await expect(page.locator('input[name="slug"]')).toHaveValue('sribna-kabluchka-tonka-liniia')
+    await expect(page.getByText('RG-001-16 · р. 16 · 890 грн')).toBeVisible()
+  })
 })

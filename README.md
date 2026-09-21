@@ -8,11 +8,19 @@
 cp .env.example .env   # задати PAYLOAD_SECRET
 npm install
 npm run db:up          # Postgres у Docker на порту 5434
+npm run seed           # тестовий каталог (--reset, щоб перестворити)
 npm run dev
 ```
 
 - Сайт: http://localhost:3000
 - Адмінка: http://localhost:3000/admin (перший вхід створює адміністратора)
+
+## Тести
+
+```sh
+npm run test:int                         # окрема база jewelry_shop_test (TEST_DATABASE_URL)
+PW_CHANNEL=chrome npx playwright test    # E2E; потрібен засіяний каталог
+```
 
 ## Міграції
 

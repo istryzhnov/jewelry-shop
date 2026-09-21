@@ -1,5 +1,6 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { seoPlugin } from '@payloadcms/plugin-seo'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { uk } from '@payloadcms/translations/languages/uk'
 import path from 'path'
@@ -7,8 +8,14 @@ import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
-import { Users } from './collections/Users'
+import { Categories } from './collections/Categories'
 import { Media } from './collections/Media'
+import { Pages } from './collections/Pages'
+import { ProductCollections } from './collections/ProductCollections'
+import { Products } from './collections/Products'
+import { Users } from './collections/Users'
+import { Homepage } from './globals/Homepage'
+import { Settings } from './globals/Settings'
 import { migrations } from './migrations'
 
 const filename = fileURLToPath(import.meta.url)
@@ -29,7 +36,8 @@ export default buildConfig({
     supportedLanguages: { uk },
     fallbackLanguage: 'uk',
   },
-  collections: [Users, Media],
+  collections: [Products, Categories, ProductCollections, Pages, Media, Users],
+  globals: [Homepage, Settings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -46,6 +54,13 @@ export default buildConfig({
   }),
   sharp,
   plugins: [
+    seoPlugin({
+      collections: ['products', 'categories', 'product-collections', 'pages'],
+      uploadsCollection: 'media',
+      generateTitle: ({ doc }) => doc?.name || doc?.title || '',
+      generateDescription: ({ doc }) =>
+        typeof doc?.description === 'string' ? doc.description : '',
+    }),
     // Media goes to Cloudflare R2 when configured; otherwise stored on local disk (dev only)
     s3Storage({
       enabled: Boolean(process.env.S3_BUCKET),
