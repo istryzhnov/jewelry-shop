@@ -1,16 +1,19 @@
 import type {
   ArrayFieldValidation,
   CollectionBeforeChangeHook,
+  CollectionBeforeValidateHook,
   CollectionConfig,
   TextFieldSingleValidation,
 } from 'payload'
 
-import { isAdmin, publishedOrAdmin } from '@/access'
+import { isAdmin, isAdminField, publishedOrAdmin } from '@/access'
 import { slug } from '@/fields/slug'
 import { status } from '@/fields/status'
+import { retailPrice } from '@/utilities/pricing'
 
 type Variant = {
   sku?: string | null
+  costPrice?: number | null
   price?: number | null
   quantity?: number | null
   madeToOrder?: boolean | null
@@ -28,6 +31,17 @@ const validateSku: TextFieldSingleValidation = async (value, { req, id }) => {
     req,
   })
   return totalDocs > 0 ? `Артикул ${value} вже використовується в іншому товарі` : true
+}
+
+// Variants with a supplier cost get their retail price from the markup in settings
+const applyMarkup: CollectionBeforeValidateHook = async ({ data, req }) => {
+  const variants: Variant[] | undefined = data?.variants
+  if (!variants?.some((v) => typeof v.costPrice === 'number')) return data
+  const pricing = await req.payload.findGlobal({ slug: 'settings', depth: 0, req })
+  for (const v of variants) {
+    if (typeof v.costPrice === 'number') v.price = retailPrice(v.costPrice, pricing)
+  }
+  return data
 }
 
 // Denormalized fields for catalog filtering and sorting
@@ -56,6 +70,7 @@ export const Products: CollectionConfig = {
     delete: isAdmin,
   },
   hooks: {
+    beforeValidate: [applyMarkup],
     beforeChange: [computeCatalogFields],
   },
   fields: [
@@ -100,6 +115,25 @@ export const Products: CollectionConfig = {
       relationTo: 'media',
       hasMany: true,
       admin: { description: 'Перше фото — головне' },
+    },
+    {
+      name: 'photoFolder',
+      label: 'Папка з фото (Google Drive)',
+      type: 'text',
+      access: { read: isAdminField },
+      admin: {
+        description: 'Фото з публічної папки завантажуються автоматично. Ручні фото зберігаються.',
+      },
+    },
+    {
+      name: 'photoSyncError',
+      label: 'Помилка завантаження фото',
+      type: 'text',
+      access: { read: isAdminField },
+      admin: {
+        readOnly: true,
+        condition: (data) => Boolean(data?.photoSyncError),
+      },
     },
     { name: 'description', label: 'Опис', type: 'richText' },
     {
@@ -200,6 +234,14 @@ export const Products: CollectionConfig = {
         {
           type: 'row',
           fields: [
+            {
+              name: 'costPrice',
+              label: 'Закупівельна, грн',
+              type: 'number',
+              min: 0,
+              access: { read: isAdminField },
+              admin: { description: 'Якщо вказана, ціна рахується з націнки в налаштуваннях' },
+            },
             { name: 'price', label: 'Ціна, грн', type: 'number', required: true, min: 0 },
             { name: 'oldPrice', label: 'Стара ціна, грн', type: 'number', min: 0 },
             {
@@ -240,6 +282,36 @@ export const Products: CollectionConfig = {
       type: 'checkbox',
       index: true,
       admin: { readOnly: true, hidden: true },
+    },
+    {
+      type: 'collapsible',
+      label: 'Імпорт',
+      admin: { position: 'sidebar', initCollapsed: true },
+      fields: [
+        {
+          name: 'importManaged',
+          label: 'Керується прайсом',
+          type: 'checkbox',
+          defaultValue: false,
+          access: { read: isAdminField },
+          admin: { description: 'Ціну й категорію оновлює імпорт; назву та опис — ні' },
+        },
+        {
+          name: 'autoPublish',
+          label: 'Опублікувати, коли з’являться фото',
+          type: 'checkbox',
+          defaultValue: false,
+          access: { read: isAdminField },
+        },
+        {
+          name: 'archivedByImport',
+          label: 'Знято з прайсу',
+          type: 'checkbox',
+          defaultValue: false,
+          access: { read: isAdminField },
+          admin: { readOnly: true },
+        },
+      ],
     },
   ],
 }
