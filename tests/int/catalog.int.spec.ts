@@ -143,3 +143,50 @@ describe('catalog', () => {
     expect(docs.every((d) => d.status === 'published')).toBe(true)
   })
 })
+
+describe('markup pricing', () => {
+  let payload: Payload
+
+  beforeAll(async () => {
+    payload = await getPayload({ config: await config })
+    await clearCatalog(payload)
+    await seed(payload)
+  })
+
+  afterAll(async () => {
+    await payload.updateGlobal({ slug: 'settings', data: { markupPercent: 0, roundTo: 10 } })
+    await clearCatalog(payload)
+  })
+
+  it('derives price from cost and recalculates when markup changes', async () => {
+    await payload.updateGlobal({ slug: 'settings', data: { markupPercent: 30, roundTo: 10 } })
+    const categories = await payload.find({ collection: 'categories', limit: 1 })
+    const product = await payload.create({
+      collection: 'products',
+      data: {
+        name: 'З прайсу',
+        slug: 'z-praisu',
+        status: 'draft',
+        category: categories.docs[0].id,
+        variants: [{ sku: 'COST-1', costPrice: 1210, price: 0, quantity: 1 }],
+      },
+    })
+    expect(product.variants[0].price).toBe(1580)
+    expect(product.minPrice).toBe(1580)
+
+    await payload.updateGlobal({ slug: 'settings', data: { markupPercent: 50 } })
+    const updated = await payload.findByID({ collection: 'products', id: product.id })
+    expect(updated.variants[0].price).toBe(1820)
+    expect(updated.minPrice).toBe(1820)
+  })
+
+  it('hides cost price from anonymous visitors', async () => {
+    const { docs } = await payload.find({
+      collection: 'products',
+      overrideAccess: false,
+      where: { status: { equals: 'published' } },
+      limit: 1,
+    })
+    expect(docs[0].variants[0]).not.toHaveProperty('costPrice')
+  })
+})
