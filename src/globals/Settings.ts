@@ -1,12 +1,14 @@
 import type { GlobalConfig } from 'payload'
 
-import { isAdmin } from '@/access'
+import { isAdmin, isAdminField } from '@/access'
+import { recalculatePrices } from '@/hooks/recalculatePrices'
 
 export const Settings: GlobalConfig = {
   slug: 'settings',
   label: 'Налаштування',
   admin: { group: 'Налаштування' },
   access: { read: () => true, update: isAdmin },
+  hooks: { afterChange: [recalculatePrices] },
   fields: [
     {
       name: 'shopName',
@@ -32,6 +34,28 @@ export const Settings: GlobalConfig = {
         { name: 'email', label: 'Email', type: 'email' },
         { name: 'address', label: 'Адреса', type: 'text' },
         { name: 'legalInfo', label: 'Дані ФОП', type: 'textarea' },
+      ],
+    },
+    {
+      type: 'row',
+      fields: [
+        {
+          name: 'markupPercent',
+          label: 'Націнка, %',
+          type: 'number',
+          defaultValue: 0,
+          min: 0,
+          access: { read: isAdminField },
+          admin: { description: 'До закупівельної ціни з прайсу' },
+        },
+        {
+          name: 'roundTo',
+          label: 'Округлення ціни вгору до, грн',
+          type: 'number',
+          defaultValue: 10,
+          min: 1,
+          access: { read: isAdminField },
+        },
       ],
     },
     {

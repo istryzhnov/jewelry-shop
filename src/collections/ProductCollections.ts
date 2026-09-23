@@ -21,6 +21,16 @@ export const ProductCollections: CollectionConfig = {
   fields: [
     { name: 'name', label: 'Назва', type: 'text', required: true },
     slug(),
+    {
+      name: 'importName',
+      label: 'Назва в прайсі',
+      type: 'text',
+      index: true,
+      admin: {
+        position: 'sidebar',
+        description: 'За цією назвою імпорт знаходить запис, тож саму назву можна змінювати',
+      },
+    },
     { name: 'description', label: 'Опис', type: 'textarea' },
     { name: 'image', label: 'Зображення', type: 'upload', relationTo: 'media' },
   ],
