@@ -59,692 +59,906 @@ export type SupportedTimezones =
   | 'Pacific/Guam'
   | 'Pacific/Noumea'
   | 'Pacific/Auckland'
-  | 'Pacific/Fiji'
+  | 'Pacific/Fiji';
 
 export interface Config {
   auth: {
-    users: UserAuthOperations
-  }
-  blocks: {}
+    users: UserAuthOperations;
+  };
+  blocks: {};
   collections: {
-    products: Product
-    categories: Category
-    'product-collections': ProductCollection
-    pages: Page
-    media: Media
-    users: User
-    'payload-kv': PayloadKv
-    'payload-locked-documents': PayloadLockedDocument
-    'payload-preferences': PayloadPreference
-    'payload-migrations': PayloadMigration
-  }
-  collectionsJoins: {}
+    products: Product;
+    categories: Category;
+    'product-collections': ProductCollection;
+    'import-runs': ImportRun;
+    pages: Page;
+    media: Media;
+    users: User;
+    'payload-kv': PayloadKv;
+    'payload-jobs': PayloadJob;
+    'payload-locked-documents': PayloadLockedDocument;
+    'payload-preferences': PayloadPreference;
+    'payload-migrations': PayloadMigration;
+  };
+  collectionsJoins: {};
   collectionsSelect: {
-    products: ProductsSelect<false> | ProductsSelect<true>
-    categories: CategoriesSelect<false> | CategoriesSelect<true>
-    'product-collections': ProductCollectionsSelect<false> | ProductCollectionsSelect<true>
-    pages: PagesSelect<false> | PagesSelect<true>
-    media: MediaSelect<false> | MediaSelect<true>
-    users: UsersSelect<false> | UsersSelect<true>
-    'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>
-    'payload-locked-documents':
-      PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>
-    'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>
-    'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>
-  }
+    products: ProductsSelect<false> | ProductsSelect<true>;
+    categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    'product-collections': ProductCollectionsSelect<false> | ProductCollectionsSelect<true>;
+    'import-runs': ImportRunsSelect<false> | ImportRunsSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
+    media: MediaSelect<false> | MediaSelect<true>;
+    users: UsersSelect<false> | UsersSelect<true>;
+    'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
+    'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
+    'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
+    'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
+    'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
+  };
   db: {
-    defaultIDType: number
-  }
-  fallbackLocale: null
+    defaultIDType: number;
+  };
+  fallbackLocale: null;
   globals: {
-    homepage: Homepage
-    settings: Setting
-  }
+    homepage: Homepage;
+    settings: Setting;
+  };
   globalsSelect: {
-    homepage: HomepageSelect<false> | HomepageSelect<true>
-    settings: SettingsSelect<false> | SettingsSelect<true>
-  }
-  locale: null
+    homepage: HomepageSelect<false> | HomepageSelect<true>;
+    settings: SettingsSelect<false> | SettingsSelect<true>;
+  };
+  locale: null;
   widgets: {
-    collections: CollectionsWidget
-  }
-  user: User
+    collections: CollectionsWidget;
+  };
+  user: User;
   jobs: {
-    tasks: unknown
-    workflows: unknown
-  }
+    tasks: {
+      importRows: TaskImportRows;
+      syncPhotos: TaskSyncPhotos;
+      inline: {
+        input: unknown;
+        output: unknown;
+      };
+    };
+    workflows: unknown;
+  };
 }
 export interface UserAuthOperations {
   forgotPassword: {
-    email: string
-    password: string
-  }
+    email: string;
+    password: string;
+  };
   login: {
-    email: string
-    password: string
-  }
+    email: string;
+    password: string;
+  };
   registerFirstUser: {
-    email: string
-    password: string
-  }
+    email: string;
+    password: string;
+  };
   unlock: {
-    email: string
-    password: string
-  }
+    email: string;
+    password: string;
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "products".
  */
 export interface Product {
-  id: number
-  name: string
+  id: number;
+  name: string;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
-  generateSlug?: boolean | null
-  slug: string
-  status: 'draft' | 'published' | 'archived'
-  category: number | Category
-  collection?: (number | null) | ProductCollection
-  isNew?: boolean | null
+  generateSlug?: boolean | null;
+  slug: string;
+  status: 'draft' | 'published' | 'archived';
+  category: number | Category;
+  collection?: (number | null) | ProductCollection;
+  isNew?: boolean | null;
   /**
    * Виріб в одному екземплярі
    */
-  isUnique?: boolean | null
+  isUnique?: boolean | null;
   /**
    * Перше фото — головне
    */
-  images?: (number | Media)[] | null
+  images?: (number | Media)[] | null;
+  /**
+   * Фото з публічної папки завантажуються автоматично. Ручні фото зберігаються.
+   */
+  photoFolder?: string | null;
+  photoSyncError?: string | null;
   description?: {
     root: {
-      type: string
+      type: string;
       children: {
-        type: any
-        version: number
-        [k: string]: unknown
-      }[]
-      direction: ('ltr' | 'rtl') | null
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
-      indent: number
-      version: number
-    }
-    [k: string]: unknown
-  } | null
-  type?:
-    | (
-        | 'ring'
-        | 'earrings'
-        | 'pendant'
-        | 'necklace'
-        | 'chain'
-        | 'bracelet'
-        | 'brooch'
-        | 'set'
-        | 'other'
-      )
-    | null
-  coating?: string | null
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  type?: ('ring' | 'earrings' | 'pendant' | 'necklace' | 'chain' | 'bracelet' | 'brooch' | 'set' | 'other') | null;
+  coating?: string | null;
   stones?:
     | {
-        stone: string
-        count?: number | null
-        size?: string | null
-        id?: string | null
+        stone: string;
+        count?: number | null;
+        size?: string | null;
+        id?: string | null;
       }[]
-    | null
+    | null;
   variants: {
-    sku: string
-    size?: string | null
-    metal?:
-      | ('silver' | 'gold-yellow' | 'gold-white' | 'gold-rose' | 'platinum' | 'steel' | 'other')
-      | null
-    purity?: string | null
-    weight?: number | null
-    price: number
-    oldPrice?: number | null
-    quantity: number
-    madeToOrder?: boolean | null
-    id?: string | null
-  }[]
-  minPrice?: number | null
-  inStock?: boolean | null
-  madeToOrder?: boolean | null
+    sku: string;
+    size?: string | null;
+    metal?: ('silver' | 'gold-yellow' | 'gold-white' | 'gold-rose' | 'platinum' | 'steel' | 'other') | null;
+    purity?: string | null;
+    weight?: number | null;
+    /**
+     * Якщо вказана, ціна рахується з націнки в налаштуваннях
+     */
+    costPrice?: number | null;
+    price: number;
+    oldPrice?: number | null;
+    quantity: number;
+    madeToOrder?: boolean | null;
+    id?: string | null;
+  }[];
+  minPrice?: number | null;
+  inStock?: boolean | null;
+  madeToOrder?: boolean | null;
+  /**
+   * Ціну й категорію оновлює імпорт; назву та опис — ні
+   */
+  importManaged?: boolean | null;
+  autoPublish?: boolean | null;
+  archivedByImport?: boolean | null;
   meta?: {
-    title?: string | null
-    description?: string | null
+    title?: string | null;
+    description?: string | null;
     /**
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
-    image?: (number | null) | Media
-  }
-  updatedAt: string
-  createdAt: string
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "categories".
  */
 export interface Category {
-  id: number
-  _order?: string | null
-  name: string
-  parent?: (number | null) | Category
+  id: number;
+  _order?: string | null;
+  name: string;
+  parent?: (number | null) | Category;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
-  generateSlug?: boolean | null
-  slug: string
-  description?: string | null
-  image?: (number | null) | Media
+  generateSlug?: boolean | null;
+  slug: string;
+  /**
+   * За цією назвою імпорт знаходить запис, тож саму назву можна змінювати
+   */
+  importName?: string | null;
+  description?: string | null;
+  image?: (number | null) | Media;
   meta?: {
-    title?: string | null
-    description?: string | null
+    title?: string | null;
+    description?: string | null;
     /**
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
-    image?: (number | null) | Media
-  }
-  updatedAt: string
-  createdAt: string
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
-  id: number
-  alt: string
-  updatedAt: string
-  createdAt: string
-  url?: string | null
-  thumbnailURL?: string | null
-  filename?: string | null
-  mimeType?: string | null
-  filesize?: number | null
-  width?: number | null
-  height?: number | null
-  focalX?: number | null
-  focalY?: number | null
+  id: number;
+  alt: string;
+  sourceId?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
   sizes?: {
     thumbnail?: {
-      url?: string | null
-      width?: number | null
-      height?: number | null
-      mimeType?: string | null
-      filesize?: number | null
-      filename?: string | null
-    }
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
     card?: {
-      url?: string | null
-      width?: number | null
-      height?: number | null
-      mimeType?: string | null
-      filesize?: number | null
-      filename?: string | null
-    }
-    large?: {
-      url?: string | null
-      width?: number | null
-      height?: number | null
-      mimeType?: string | null
-      filesize?: number | null
-      filename?: string | null
-    }
-  }
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "product-collections".
  */
 export interface ProductCollection {
-  id: number
-  _order?: string | null
-  name: string
+  id: number;
+  _order?: string | null;
+  name: string;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
-  generateSlug?: boolean | null
-  slug: string
-  description?: string | null
-  image?: (number | null) | Media
+  generateSlug?: boolean | null;
+  slug: string;
+  /**
+   * За цією назвою імпорт знаходить запис, тож саму назву можна змінювати
+   */
+  importName?: string | null;
+  description?: string | null;
+  image?: (number | null) | Media;
   meta?: {
-    title?: string | null
-    description?: string | null
+    title?: string | null;
+    description?: string | null;
     /**
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
-    image?: (number | null) | Media
-  }
-  updatedAt: string
-  createdAt: string
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Завантажте .xlsx прайс — спершу побачите звіт, а зміни внесуться після «Застосувати».
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "import-runs".
+ */
+export interface ImportRun {
+  id: number;
+  status?: ('preview' | 'running' | 'done') | null;
+  processed?: number | null;
+  report?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  results?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  rows?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages".
  */
 export interface Page {
-  id: number
-  title: string
+  id: number;
+  title: string;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
-  generateSlug?: boolean | null
-  slug: string
-  status: 'draft' | 'published' | 'archived'
+  generateSlug?: boolean | null;
+  slug: string;
+  status: 'draft' | 'published' | 'archived';
   content?: {
     root: {
-      type: string
+      type: string;
       children: {
-        type: any
-        version: number
-        [k: string]: unknown
-      }[]
-      direction: ('ltr' | 'rtl') | null
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
-      indent: number
-      version: number
-    }
-    [k: string]: unknown
-  } | null
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   meta?: {
-    title?: string | null
-    description?: string | null
+    title?: string | null;
+    description?: string | null;
     /**
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
-    image?: (number | null) | Media
-  }
-  updatedAt: string
-  createdAt: string
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
-  id: number
-  updatedAt: string
-  createdAt: string
-  email: string
-  resetPasswordToken?: string | null
-  resetPasswordExpiration?: string | null
-  salt?: string | null
-  hash?: string | null
-  resetPasswordRequestedAt?: string | null
-  loginAttempts?: number | null
-  lockUntil?: string | null
+  id: number;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
   sessions?:
     | {
-        id: string
-        createdAt?: string | null
-        expiresAt: string
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
       }[]
-    | null
-  password?: string | null
-  collection: 'users'
+    | null;
+  password?: string | null;
+  collection: 'users';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: number
-  key: string
+  id: number;
+  key: string;
   data:
     | {
-        [k: string]: unknown
+        [k: string]: unknown;
       }
     | unknown[]
     | string
     | number
     | boolean
-    | null
+    | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs".
+ */
+export interface PayloadJob {
+  id: number;
+  /**
+   * Input data provided to the job
+   */
+  input?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  taskStatus?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  completedAt?: string | null;
+  totalTried?: number | null;
+  /**
+   * If hasError is true this job will not be retried
+   */
+  hasError?: boolean | null;
+  /**
+   * If hasError is true, this is the error that caused it
+   */
+  error?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Task execution log
+   */
+  log?:
+    | {
+        executedAt: string;
+        completedAt: string;
+        taskSlug: 'inline' | 'importRows' | 'syncPhotos';
+        taskID: string;
+        input?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        output?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        state: 'failed' | 'succeeded';
+        error?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  taskSlug?: ('inline' | 'importRows' | 'syncPhotos') | null;
+  queue?: string | null;
+  waitUntil?: string | null;
+  processing?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: number
+  id: number;
   document?:
     | ({
-        relationTo: 'products'
-        value: number | Product
+        relationTo: 'products';
+        value: number | Product;
       } | null)
     | ({
-        relationTo: 'categories'
-        value: number | Category
+        relationTo: 'categories';
+        value: number | Category;
       } | null)
     | ({
-        relationTo: 'product-collections'
-        value: number | ProductCollection
+        relationTo: 'product-collections';
+        value: number | ProductCollection;
       } | null)
     | ({
-        relationTo: 'pages'
-        value: number | Page
+        relationTo: 'import-runs';
+        value: number | ImportRun;
       } | null)
     | ({
-        relationTo: 'media'
-        value: number | Media
+        relationTo: 'pages';
+        value: number | Page;
       } | null)
     | ({
-        relationTo: 'users'
-        value: number | User
+        relationTo: 'media';
+        value: number | Media;
       } | null)
-  globalSlug?: string | null
+    | ({
+        relationTo: 'users';
+        value: number | User;
+      } | null);
+  globalSlug?: string | null;
   user: {
-    relationTo: 'users'
-    value: number | User
-  }
-  updatedAt: string
-  createdAt: string
+    relationTo: 'users';
+    value: number | User;
+  };
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: number
+  id: number;
   user: {
-    relationTo: 'users'
-    value: number | User
-  }
-  key?: string | null
+    relationTo: 'users';
+    value: number | User;
+  };
+  key?: string | null;
   value?:
     | {
-        [k: string]: unknown
+        [k: string]: unknown;
       }
     | unknown[]
     | string
     | number
     | boolean
-    | null
-  updatedAt: string
-  createdAt: string
+    | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: number
-  name?: string | null
-  batch?: number | null
-  updatedAt: string
-  createdAt: string
+  id: number;
+  name?: string | null;
+  batch?: number | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "products_select".
  */
 export interface ProductsSelect<T extends boolean = true> {
-  name?: T
-  generateSlug?: T
-  slug?: T
-  status?: T
-  category?: T
-  collection?: T
-  isNew?: T
-  isUnique?: T
-  images?: T
-  description?: T
-  type?: T
-  coating?: T
+  name?: T;
+  generateSlug?: T;
+  slug?: T;
+  status?: T;
+  category?: T;
+  collection?: T;
+  isNew?: T;
+  isUnique?: T;
+  images?: T;
+  photoFolder?: T;
+  photoSyncError?: T;
+  description?: T;
+  type?: T;
+  coating?: T;
   stones?:
     | T
     | {
-        stone?: T
-        count?: T
-        size?: T
-        id?: T
-      }
+        stone?: T;
+        count?: T;
+        size?: T;
+        id?: T;
+      };
   variants?:
     | T
     | {
-        sku?: T
-        size?: T
-        metal?: T
-        purity?: T
-        weight?: T
-        price?: T
-        oldPrice?: T
-        quantity?: T
-        madeToOrder?: T
-        id?: T
-      }
-  minPrice?: T
-  inStock?: T
-  madeToOrder?: T
+        sku?: T;
+        size?: T;
+        metal?: T;
+        purity?: T;
+        weight?: T;
+        costPrice?: T;
+        price?: T;
+        oldPrice?: T;
+        quantity?: T;
+        madeToOrder?: T;
+        id?: T;
+      };
+  minPrice?: T;
+  inStock?: T;
+  madeToOrder?: T;
+  importManaged?: T;
+  autoPublish?: T;
+  archivedByImport?: T;
   meta?:
     | T
     | {
-        title?: T
-        description?: T
-        image?: T
-      }
-  updatedAt?: T
-  createdAt?: T
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "categories_select".
  */
 export interface CategoriesSelect<T extends boolean = true> {
-  _order?: T
-  name?: T
-  parent?: T
-  generateSlug?: T
-  slug?: T
-  description?: T
-  image?: T
+  _order?: T;
+  name?: T;
+  parent?: T;
+  generateSlug?: T;
+  slug?: T;
+  importName?: T;
+  description?: T;
+  image?: T;
   meta?:
     | T
     | {
-        title?: T
-        description?: T
-        image?: T
-      }
-  updatedAt?: T
-  createdAt?: T
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "product-collections_select".
  */
 export interface ProductCollectionsSelect<T extends boolean = true> {
-  _order?: T
-  name?: T
-  generateSlug?: T
-  slug?: T
-  description?: T
-  image?: T
+  _order?: T;
+  name?: T;
+  generateSlug?: T;
+  slug?: T;
+  importName?: T;
+  description?: T;
+  image?: T;
   meta?:
     | T
     | {
-        title?: T
-        description?: T
-        image?: T
-      }
-  updatedAt?: T
-  createdAt?: T
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "import-runs_select".
+ */
+export interface ImportRunsSelect<T extends boolean = true> {
+  status?: T;
+  processed?: T;
+  report?: T;
+  results?: T;
+  rows?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages_select".
  */
 export interface PagesSelect<T extends boolean = true> {
-  title?: T
-  generateSlug?: T
-  slug?: T
-  status?: T
-  content?: T
+  title?: T;
+  generateSlug?: T;
+  slug?: T;
+  status?: T;
+  content?: T;
   meta?:
     | T
     | {
-        title?: T
-        description?: T
-        image?: T
-      }
-  updatedAt?: T
-  createdAt?: T
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
-  alt?: T
-  updatedAt?: T
-  createdAt?: T
-  url?: T
-  thumbnailURL?: T
-  filename?: T
-  mimeType?: T
-  filesize?: T
-  width?: T
-  height?: T
-  focalX?: T
-  focalY?: T
+  alt?: T;
+  sourceId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
   sizes?:
     | T
     | {
         thumbnail?:
           | T
           | {
-              url?: T
-              width?: T
-              height?: T
-              mimeType?: T
-              filesize?: T
-              filename?: T
-            }
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
         card?:
           | T
           | {
-              url?: T
-              width?: T
-              height?: T
-              mimeType?: T
-              filesize?: T
-              filename?: T
-            }
-        large?:
-          | T
-          | {
-              url?: T
-              width?: T
-              height?: T
-              mimeType?: T
-              filesize?: T
-              filename?: T
-            }
-      }
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
-  updatedAt?: T
-  createdAt?: T
-  email?: T
-  resetPasswordToken?: T
-  resetPasswordExpiration?: T
-  salt?: T
-  hash?: T
-  resetPasswordRequestedAt?: T
-  loginAttempts?: T
-  lockUntil?: T
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  resetPasswordRequestedAt?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
   sessions?:
     | T
     | {
-        id?: T
-        createdAt?: T
-        expiresAt?: T
-      }
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
-  key?: T
-  data?: T
+  key?: T;
+  data?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs_select".
+ */
+export interface PayloadJobsSelect<T extends boolean = true> {
+  input?: T;
+  taskStatus?: T;
+  completedAt?: T;
+  totalTried?: T;
+  hasError?: T;
+  error?: T;
+  log?:
+    | T
+    | {
+        executedAt?: T;
+        completedAt?: T;
+        taskSlug?: T;
+        taskID?: T;
+        input?: T;
+        output?: T;
+        state?: T;
+        error?: T;
+        id?: T;
+      };
+  taskSlug?: T;
+  queue?: T;
+  waitUntil?: T;
+  processing?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents_select".
  */
 export interface PayloadLockedDocumentsSelect<T extends boolean = true> {
-  document?: T
-  globalSlug?: T
-  user?: T
-  updatedAt?: T
-  createdAt?: T
+  document?: T;
+  globalSlug?: T;
+  user?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-preferences_select".
  */
 export interface PayloadPreferencesSelect<T extends boolean = true> {
-  user?: T
-  key?: T
-  value?: T
-  updatedAt?: T
-  createdAt?: T
+  user?: T;
+  key?: T;
+  value?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-migrations_select".
  */
 export interface PayloadMigrationsSelect<T extends boolean = true> {
-  name?: T
-  batch?: T
-  updatedAt?: T
-  createdAt?: T
+  name?: T;
+  batch?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "homepage".
  */
 export interface Homepage {
-  id: number
+  id: number;
   hero?: {
-    title?: string | null
-    subtitle?: string | null
-    image?: (number | null) | Media
-    buttonText?: string | null
-    buttonLink?: string | null
-  }
-  featuredCollections?: (number | ProductCollection)[] | null
-  newArrivalsCount?: number | null
-  updatedAt?: string | null
-  createdAt?: string | null
+    title?: string | null;
+    subtitle?: string | null;
+    image?: (number | null) | Media;
+    buttonText?: string | null;
+    buttonLink?: string | null;
+  };
+  featuredCollections?: (number | ProductCollection)[] | null;
+  newArrivalsCount?: number | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "settings".
  */
 export interface Setting {
-  id: number
-  shopName: string
+  id: number;
+  shopName: string;
   /**
    * Без @, наприклад: my.jewelry
    */
-  instagramUsername?: string | null
+  instagramUsername?: string | null;
   contacts?: {
-    phone?: string | null
-    email?: string | null
-    address?: string | null
-    legalInfo?: string | null
-  }
+    phone?: string | null;
+    email?: string | null;
+    address?: string | null;
+    legalInfo?: string | null;
+  };
+  /**
+   * До закупівельної ціни з прайсу
+   */
+  markupPercent?: number | null;
+  roundTo?: number | null;
   analytics?: {
-    ga4Id?: string | null
-    metaPixelId?: string | null
-  }
-  updatedAt?: string | null
-  createdAt?: string | null
+    ga4Id?: string | null;
+    metaPixelId?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -754,42 +968,44 @@ export interface HomepageSelect<T extends boolean = true> {
   hero?:
     | T
     | {
-        title?: T
-        subtitle?: T
-        image?: T
-        buttonText?: T
-        buttonLink?: T
-      }
-  featuredCollections?: T
-  newArrivalsCount?: T
-  updatedAt?: T
-  createdAt?: T
-  globalType?: T
+        title?: T;
+        subtitle?: T;
+        image?: T;
+        buttonText?: T;
+        buttonLink?: T;
+      };
+  featuredCollections?: T;
+  newArrivalsCount?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "settings_select".
  */
 export interface SettingsSelect<T extends boolean = true> {
-  shopName?: T
-  instagramUsername?: T
+  shopName?: T;
+  instagramUsername?: T;
   contacts?:
     | T
     | {
-        phone?: T
-        email?: T
-        address?: T
-        legalInfo?: T
-      }
+        phone?: T;
+        email?: T;
+        address?: T;
+        legalInfo?: T;
+      };
+  markupPercent?: T;
+  roundTo?: T;
   analytics?:
     | T
     | {
-        ga4Id?: T
-        metaPixelId?: T
-      }
-  updatedAt?: T
-  createdAt?: T
-  globalType?: T
+        ga4Id?: T;
+        metaPixelId?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -797,17 +1013,39 @@ export interface SettingsSelect<T extends boolean = true> {
  */
 export interface CollectionsWidget {
   data?: {
-    [k: string]: unknown
-  }
-  width: 'full'
+    [k: string]: unknown;
+  };
+  width: 'full';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskImportRows".
+ */
+export interface TaskImportRows {
+  input: {
+    runId: number;
+    offset: number;
+  };
+  output?: unknown;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskSyncPhotos".
+ */
+export interface TaskSyncPhotos {
+  input: {
+    productId: number;
+  };
+  output?: unknown;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "auth".
  */
 export interface Auth {
-  [k: string]: unknown
+  [k: string]: unknown;
 }
+
 
 declare module 'payload' {
   export interface GeneratedTypes extends Config {}
