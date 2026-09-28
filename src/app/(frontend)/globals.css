@@ -1,1 +1,50 @@
 @import 'tailwindcss';
+
+/* Palette: deep green from design A, cream/beige tones from design B */
+@theme {
+  --color-forest: #06382a;
+  --color-forest-light: #0d4a38;
+  --color-ivory: #fbf8f3;
+  --color-cream: #f5ede2;
+  --color-sand: #e8dfd0;
+  --color-beige: #bebaac;
+  --color-beige-dark: #a8a393;
+  --color-bronze: #79593d;
+  --color-ink: #1c1c1c;
+  --color-muted: #6f6a62;
+
+  --font-display: var(--font-prata), 'Times New Roman', serif;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-ivory font-sans text-ink antialiased;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-forest;
+  }
+}
+
+@utility container-page {
+  @apply mx-auto w-full max-w-[1280px] px-4 sm:px-6 lg:px-10;
+}
+
+@utility eyebrow {
+  @apply text-sm tracking-wide text-bronze;
+}
+
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium tracking-wide transition-colors;
+}
+
+@utility btn-outline {
+  @apply btn border border-current hover:bg-ink hover:text-ivory;
+}
+
+@utility btn-beige {
+  @apply btn bg-beige text-ink hover:bg-beige-dark;
+}
