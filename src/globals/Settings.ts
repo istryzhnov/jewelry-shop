@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
+import { revalidateGlobal } from '@/hooks/revalidateStore'
 import { isAdmin, isAdminField } from '@/access'
 import { recalculatePrices } from '@/hooks/recalculatePrices'
 
@@ -8,7 +9,7 @@ export const Settings: GlobalConfig = {
   label: 'Налаштування',
   admin: { group: 'Налаштування' },
   access: { read: () => true, update: isAdmin },
-  hooks: { afterChange: [recalculatePrices] },
+  hooks: { afterChange: [recalculatePrices, revalidateGlobal] },
   fields: [
     {
       name: 'shopName',

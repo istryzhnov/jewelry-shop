@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { isAdmin } from '@/access'
 import { slug } from '@/fields/slug'
+import { revalidateOnChange, revalidateOnDelete } from '@/hooks/revalidateStore'
 
 export const ProductCollections: CollectionConfig = {
   slug: 'product-collections',
@@ -18,6 +19,7 @@ export const ProductCollections: CollectionConfig = {
     update: isAdmin,
     delete: isAdmin,
   },
+  hooks: { afterChange: [revalidateOnChange], afterDelete: [revalidateOnDelete] },
   fields: [
     { name: 'name', label: 'Назва', type: 'text', required: true },
     slug(),

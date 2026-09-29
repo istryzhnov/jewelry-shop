@@ -8,6 +8,7 @@ import type {
 
 import { isAdmin, isAdminField, publishedOrAdmin } from '@/access'
 import { slug } from '@/fields/slug'
+import { revalidateOnChange, revalidateOnDelete } from '@/hooks/revalidateStore'
 import { status } from '@/fields/status'
 import { retailPrice } from '@/utilities/pricing'
 
@@ -70,6 +71,8 @@ export const Products: CollectionConfig = {
     delete: isAdmin,
   },
   hooks: {
+    afterChange: [revalidateOnChange],
+    afterDelete: [revalidateOnDelete],
     beforeValidate: [applyMarkup],
     beforeChange: [computeCatalogFields],
   },
