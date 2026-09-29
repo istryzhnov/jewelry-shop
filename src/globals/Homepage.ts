@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
+import { revalidateGlobal } from '@/hooks/revalidateStore'
 import { isAdmin } from '@/access'
 
 export const Homepage: GlobalConfig = {
@@ -7,6 +8,7 @@ export const Homepage: GlobalConfig = {
   label: 'Головна сторінка',
   admin: { group: 'Контент' },
   access: { read: () => true, update: isAdmin },
+  hooks: { afterChange: [revalidateGlobal] },
   fields: [
     {
       type: 'group',

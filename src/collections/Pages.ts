@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { isAdmin, publishedOrAdmin } from '@/access'
 import { slug } from '@/fields/slug'
+import { revalidateOnChange, revalidateOnDelete } from '@/hooks/revalidateStore'
 import { status } from '@/fields/status'
 
 export const Pages: CollectionConfig = {
@@ -18,6 +19,7 @@ export const Pages: CollectionConfig = {
     update: isAdmin,
     delete: isAdmin,
   },
+  hooks: { afterChange: [revalidateOnChange], afterDelete: [revalidateOnDelete] },
   fields: [
     { name: 'title', label: 'Заголовок', type: 'text', required: true },
     slug('title'),
