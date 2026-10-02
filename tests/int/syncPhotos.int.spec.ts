@@ -16,7 +16,9 @@ const entry = (id: string, name: string, mime: string) =>
   `<img src="https://drive-thirdparty.googleusercontent.com/16/type/${mime}" alt=""/>` +
   `<div class="flip-entry-title">${name}</div></a></div>`
 
-const jpeg = await sharp({ create: { width: 1000, height: 1000, channels: 3, background: '#d4b483' } })
+const jpeg = await sharp({
+  create: { width: 1000, height: 1000, channels: 3, background: '#d4b483' },
+})
   .jpeg()
   .toBuffer()
 
