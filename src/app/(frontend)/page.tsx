@@ -1,13 +1,18 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { Feature } from '@/components/store/home/Feature'
 import { Hero } from '@/components/store/home/Hero'
 import { HowToOrder } from '@/components/store/home/HowToOrder'
 import { ProductTabs } from '@/components/store/home/ProductTabs'
+import { JsonLd } from '@/components/store/JsonLd'
 import { ArrowIcon } from '@/components/store/icons'
 import { ProductGrid } from '@/components/store/ProductCard'
-import { firstImage, getCategories, getHomepage, getProducts } from '@/lib/catalog'
+import { firstImage, getCategories, getHomepage, getProducts, getSettings } from '@/lib/catalog'
+import { pageMetadata } from '@/lib/seo'
+import { siteJsonLd } from '@/lib/structuredData'
 import type { Media, ProductCollection } from '@/payload-types'
+import { instagramProfileUrl } from '@/utilities/format'
 
 export const revalidate = 600
 
@@ -17,8 +22,17 @@ const TAB_PRODUCTS = 4
 const mediaOf = (value: unknown): Media | null =>
   value && typeof value === 'object' && 'url' in value ? (value as Media) : null
 
+export async function generateMetadata(): Promise<Metadata> {
+  const { hero } = await getHomepage()
+  return pageMetadata({ path: '/', description: hero?.subtitle, image: mediaOf(hero?.image) })
+}
+
 export default async function HomePage() {
-  const [homepage, categories] = await Promise.all([getHomepage(), getCategories()])
+  const [homepage, categories, settings] = await Promise.all([
+    getHomepage(),
+    getCategories(),
+    getSettings(),
+  ])
   const tabCategories = categories.filter((c) => !c.parent).slice(0, TAB_CATEGORIES)
   const newArrivals = homepage.newArrivalsCount || TAB_PRODUCTS
 
@@ -50,6 +64,12 @@ export default async function HomePage() {
 
   return (
     <>
+      <JsonLd
+        data={siteJsonLd({
+          shopName: settings.shopName,
+          instagramUrl: instagramProfileUrl(settings.instagramUsername),
+        })}
+      />
       <Hero
         title={hero?.title || 'Прикраси ручної роботи'}
         subtitle={hero?.subtitle}

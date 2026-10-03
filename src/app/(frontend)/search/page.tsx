@@ -4,7 +4,7 @@ import { CatalogView } from '@/components/store/catalog/CatalogView'
 import { SearchIcon } from '@/components/store/icons'
 import { parseCatalogParams, type SearchParams } from '@/lib/searchParams'
 
-export const metadata: Metadata = { title: 'Пошук' }
+export const metadata: Metadata = { title: 'Пошук', robots: { index: false, follow: true } }
 
 export default async function SearchPage({
   searchParams,

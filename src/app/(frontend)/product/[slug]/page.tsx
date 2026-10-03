@@ -4,31 +4,47 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { ChevronIcon } from '@/components/store/icons'
+import { TrackEvent } from '@/components/analytics/TrackEvent'
+import { JsonLd } from '@/components/store/JsonLd'
 import { ProductGrid } from '@/components/store/ProductCard'
 import { Gallery } from '@/components/store/product/Gallery'
 import { Purchase } from '@/components/store/product/Purchase'
 import { firstImage, getProductBySlug, getProducts, getSettings } from '@/lib/catalog'
 import { METAL_LABELS, TYPE_LABELS } from '@/lib/labels'
-import type { Category, Media } from '@/payload-types'
-import { instagramDirectUrl } from '@/utilities/format'
+import { pageMetadata } from '@/lib/seo'
+import { breadcrumbsJsonLd, productJsonLd } from '@/lib/structuredData'
+import type { Category, Media, Product } from '@/payload-types'
+import { formatPrice, instagramDirectUrl } from '@/utilities/format'
 
 export const revalidate = 600
 
-// Rendered on first visit and then cached (ISR); revalidated when the product changes
 export const generateStaticParams = () => []
 
 type Props = { params: Promise<{ slug: string }> }
 
 const siteUrl = process.env.NEXT_PUBLIC_SERVER_URL ?? ''
 
+function productDescription(product: Product) {
+  const variant = product.variants[0]
+  const facts = [
+    product.name,
+    product.type && TYPE_LABELS[product.type].toLowerCase(),
+    variant && `арт. ${variant.sku}`,
+    `ціна ${formatPrice(product.minPrice)}`,
+  ]
+  return `${facts.filter(Boolean).join(', ')}. Замовлення в Instagram, доставка по Україні.`
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const product = await getProductBySlug((await params).slug)
   if (!product) return {}
-  const image = firstImage(product.images)
-  return {
+  return pageMetadata({
+    path: `/product/${product.slug}`,
     title: product.name,
-    openGraph: { title: product.name, images: image?.url ? [image.url] : undefined },
-  }
+    description: productDescription(product),
+    image: firstImage(product.images),
+    seo: product.meta,
+  })
 }
 
 export default async function ProductPage({ params }: Props) {
@@ -60,8 +76,38 @@ export default async function ProductPage({ params }: Props) {
     ]),
   ].filter(Boolean) as [string, string][]
 
+  const crumbs = [
+    { name: 'Каталог', path: '/catalog' },
+    ...(category ? [{ name: category.name, path: `/catalog/${category.slug}` }] : []),
+    { name: product.name, path: `/product/${product.slug}` },
+  ]
+
   return (
     <div className="container-page pt-4">
+      <JsonLd
+        data={[
+          productJsonLd(product, {
+            shopName: settings.shopName,
+            description: product.meta?.description || productDescription(product),
+          }),
+          breadcrumbsJsonLd(crumbs),
+        ]}
+      />
+      <TrackEvent
+        event="view_item"
+        params={{
+          currency: 'UAH',
+          value: product.minPrice ?? 0,
+          items: [
+            {
+              item_id: product.variants[0]?.sku ?? product.slug,
+              item_name: product.name,
+              price: product.minPrice,
+              item_category: category?.name,
+            },
+          ],
+        }}
+      />
       <nav aria-label="Хлібні крихти" className="mb-6 text-sm text-muted">
         <Link href="/catalog" className="hover:text-ink">
           Каталог
@@ -91,6 +137,7 @@ export default async function ProductPage({ params }: Props) {
           )}
           <div className="mt-6">
             <Purchase
+              category={category?.name}
               name={product.name}
               slug={product.slug}
               url={`${siteUrl}/product/${product.slug}`}

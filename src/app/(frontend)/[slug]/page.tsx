@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { getPageBySlug } from '@/lib/catalog'
+import { pageMetadata } from '@/lib/seo'
 
 export const revalidate = 600
 
@@ -12,7 +13,9 @@ type Props = { params: Promise<{ slug: string }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const page = await getPageBySlug((await params).slug)
-  return page ? { title: page.title } : {}
+  return page
+    ? pageMetadata({ path: `/${page.slug}`, title: page.title, seo: page.meta, type: 'article' })
+    : {}
 }
 
 export default async function ContentPage({ params }: Props) {
