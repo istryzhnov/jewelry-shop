@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 import { FavoritesList } from '@/components/store/FavoritesList'
 
-export const metadata: Metadata = { title: 'Улюблене' }
+export const metadata: Metadata = { title: 'Улюблене', robots: { index: false, follow: true } }
 
 export default function FavoritesPage() {
   return (
