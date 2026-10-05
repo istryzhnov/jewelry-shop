@@ -20,7 +20,7 @@ type Variant = {
   madeToOrder?: boolean | null
 }
 
-// SKU must be unique across all products (it is the key for xlsx import)
+// SKU is the import key, so it must be unique across products
 const validateSku: TextFieldSingleValidation = async (value, { req, id }) => {
   if (!value) return 'Вкажіть артикул'
   const { totalDocs } = await req.payload.count({
@@ -34,7 +34,6 @@ const validateSku: TextFieldSingleValidation = async (value, { req, id }) => {
   return totalDocs > 0 ? `Артикул ${value} вже використовується в іншому товарі` : true
 }
 
-// Variants with a supplier cost get their retail price from the markup in settings
 const applyMarkup: CollectionBeforeValidateHook = async ({ data, req }) => {
   const variants: Variant[] | undefined = data?.variants
   if (!variants?.some((v) => typeof v.costPrice === 'number')) return data
@@ -45,7 +44,6 @@ const applyMarkup: CollectionBeforeValidateHook = async ({ data, req }) => {
   return data
 }
 
-// Denormalized fields for catalog filtering and sorting
 const computeCatalogFields: CollectionBeforeChangeHook = ({ data }) => {
   const variants: Variant[] = data.variants ?? []
   const prices = variants.map((v) => v.price).filter((p): p is number => typeof p === 'number')

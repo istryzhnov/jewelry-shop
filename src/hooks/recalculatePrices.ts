@@ -2,7 +2,7 @@ import { sql } from '@payloadcms/db-postgres'
 import type { PostgresAdapter } from '@payloadcms/db-postgres'
 import type { GlobalAfterChangeHook } from 'payload'
 
-// Same formula as utilities/pricing.ts, done in SQL so ~1000 products update in one request
+// Same formula as utilities/pricing.ts, in SQL to update all products at once
 export const recalculatePrices: GlobalAfterChangeHook = async ({ doc, previousDoc, req }) => {
   if (doc.markupPercent === previousDoc?.markupPercent && doc.roundTo === previousDoc?.roundTo) {
     return doc

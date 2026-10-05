@@ -13,7 +13,6 @@ type HeroProps = {
   image: Media | null
 }
 
-// Design A: wide photo overlapping a deep-green panel, oversized serif title on the panel
 export function Hero({ title, subtitle, buttonText, buttonLink, image }: HeroProps) {
   return (
     <section className="relative">

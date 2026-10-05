@@ -2,8 +2,7 @@ import type { Endpoint } from 'payload'
 
 import { QUEUES, releaseStaleJobs } from '.'
 
-// Called every minute by the Netlify scheduled function: recover stuck jobs, then run one
-// (import batches take priority over photo downloads)
+// Called by the Netlify scheduled function; import jobs go before photo jobs
 export const jobsTick: Endpoint = {
   path: '/jobs/tick',
   method: 'post',

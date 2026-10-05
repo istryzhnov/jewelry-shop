@@ -10,7 +10,6 @@ let payload: Payload
 
 const XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 
-// More rows than one batch, so the chained batch jobs are exercised
 async function priceList(count: number) {
   const wb = new ExcelJS.Workbook()
   const ws = wb.addWorksheet('Лист1')

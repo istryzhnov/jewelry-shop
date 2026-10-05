@@ -20,7 +20,6 @@ export function FavoritesList() {
     fetch(`/api/products?${query}`)
       .then((res) => (res.ok ? res.json() : { docs: [] }))
       .then(({ docs }: { docs: ProductCardData[] }) => {
-        // Keep the order in which items were added
         if (!cancelled)
           setProducts(key.split(',').flatMap((slug) => docs.filter((d) => d.slug === slug)))
       })

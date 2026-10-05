@@ -1,4 +1,3 @@
-// Minimal Lexical document built from plain-text paragraphs
 export function richTextFromParagraphs(paragraphs: string[]) {
   return {
     root: {

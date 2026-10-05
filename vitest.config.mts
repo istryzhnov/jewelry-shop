@@ -8,7 +8,6 @@ export default defineConfig({
     environment: 'node',
     setupFiles: ['./vitest.setup.ts'],
     include: ['tests/int/**/*.int.spec.ts'],
-    // Test files share one database
     fileParallelism: false,
   },
 })

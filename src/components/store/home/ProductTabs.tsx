@@ -4,7 +4,6 @@ import { useState } from 'react'
 
 type Tab = { id: string; label: string; content: React.ReactNode }
 
-// Product lists are rendered on the server; tabs only switch which one is visible
 export function ProductTabs({ tabs }: { tabs: Tab[] }) {
   const [active, setActive] = useState(tabs[0]?.id)
   return (

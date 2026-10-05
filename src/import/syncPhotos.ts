@@ -11,7 +11,7 @@ export type PhotoSyncResult = {
   failed: string[]
 }
 
-// Mirrors a product's Drive folder into its images; manually uploaded photos are kept after them
+// Mirrors the Drive folder into product images; manual photos are kept
 export async function syncProductPhotos(
   payload: Payload,
   productId: number,
@@ -45,7 +45,6 @@ export async function syncProductPhotos(
       synced.push(existing)
       continue
     }
-    // A single broken file in the folder must not block the rest
     const data = await downloadImage(image.id, fetcher).catch(() => null)
     if (!data) {
       failed.push(image.name)
@@ -92,7 +91,6 @@ export async function syncProductPhotos(
   return { added, removed: stale.length, published: publish, failed }
 }
 
-// Runs the sync and stores the outcome on the product so admins see broken folders/files
 export async function syncAndRecordPhotos(payload: Payload, productId: number, fetcher?: Fetcher) {
   const record = (photoSyncError: string | null) =>
     payload.update({ collection: 'products', id: productId, data: { photoSyncError } })

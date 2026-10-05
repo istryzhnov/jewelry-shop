@@ -16,7 +16,6 @@ export type ImportPlan = {
 
 type Taxonomy = 'categories' | 'product-collections'
 
-// Caches category/collection ids by their price-list name for one import pass
 export class TaxonomyCache {
   private maps = {
     categories: { ids: new Map<string, number>(), names: new Map<number, string>() },
@@ -116,7 +115,6 @@ async function loadProductsBySku(payload: Payload, req?: Partial<PayloadRequest>
   return { bySku, all: docs as ExistingProduct[] }
 }
 
-// Dry run: what applying these rows would change
 export async function planImport(payload: Payload, rows: PriceListRow[]): Promise<ImportPlan> {
   const taxonomy = await new TaxonomyCache(payload).load()
   const { bySku, all } = await loadProductsBySku(payload)
@@ -218,7 +216,6 @@ export async function upsertRow(
   return { result: 'updated', productId: existing.id, needsPhotos }
 }
 
-// Products that came from the price list but are no longer in it leave the site
 export async function archiveMissing(
   payload: Payload,
   skus: Set<string>,

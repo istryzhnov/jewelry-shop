@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 
+import { track } from '@/lib/analytics'
 import { variantLabel } from '@/lib/labels'
 import type { Product } from '@/payload-types'
 import { formatPrice } from '@/utilities/format'
@@ -15,6 +16,7 @@ type Variant = Pick<
 >
 
 type Props = {
+  category?: string
   name: string
   slug: string
   url: string
@@ -31,7 +33,7 @@ async function copy(text: string) {
   }
 }
 
-export function Purchase({ name, slug, url, variants, instagramDirect }: Props) {
+export function Purchase({ category, name, slug, url, variants, instagramDirect }: Props) {
   const [index, setIndex] = useState(() =>
     Math.max(
       0,
@@ -40,7 +42,6 @@ export function Purchase({ name, slug, url, variants, instagramDirect }: Props) 
   )
   const [notice, setNotice] = useState<string | null>(null)
   const variant = variants[index]
-  // Chips show only what tells variants apart (usually size)
   const distinct = (['size', 'metal', 'purity'] as const).filter(
     (key) => new Set(variants.map((v) => v[key] ?? '')).size > 1,
   )
@@ -55,13 +56,20 @@ export function Purchase({ name, slug, url, variants, instagramDirect }: Props) 
   const order = async () => {
     const details = variantLabel(variant)
     const message = `Вітаю! Хочу замовити: ${name}${details ? ` (${details})` : ''}, арт. ${variant.sku}, ${formatPrice(variant.price)}. ${url}`
-    // Instagram links can't prefill a message, so the text goes to the clipboard first
+    // Instagram links can't prefill a message, so it goes to the clipboard
     const copied = await copy(message)
     setNotice(
       copied
         ? 'Текст замовлення скопійовано — вставте його в повідомлення в Instagram.'
         : `Скопіюйте й надішліть нам: ${message}`,
     )
+    track('generate_lead', {
+      currency: 'UAH',
+      value: variant.price,
+      items: [
+        { item_id: variant.sku, item_name: name, price: variant.price, item_category: category },
+      ],
+    })
     if (instagramDirect) window.open(instagramDirect, '_blank', 'noopener,noreferrer')
   }
 

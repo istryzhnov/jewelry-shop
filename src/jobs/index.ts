@@ -6,9 +6,8 @@ import { syncAndRecordPhotos } from '@/import/syncPhotos'
 
 export const IMPORT_BATCH = 200
 
-// Separate queues so slow photo downloads never hold up price/catalog updates
+// Photo downloads must not hold up catalog updates
 export const QUEUES = { import: 'import', photos: 'photos' } as const
-// Keeps one job within a serverless function's time limit
 const JOB_BUDGET_MS = 7000
 
 export type ImportResults = {
@@ -31,8 +30,7 @@ export const emptyResults = (): ImportResults => ({
   errors: [],
 })
 
-// Processes rows until the batch size or time budget is reached, then queues the rest,
-// so batches run strictly one after another
+// Each job queues the next one, so batches run strictly in order
 export const importRowsTask: TaskConfig<'importRows'> = {
   slug: 'importRows',
   label: 'Імпорт прайсу: пакет рядків',
@@ -107,7 +105,7 @@ export const syncPhotosTask: TaskConfig<'syncPhotos'> = {
 
 const STALE_AFTER_MS = 5 * 60 * 1000
 
-// A job interrupted by a timeout or restart stays "processing" forever; make it runnable again
+// Jobs killed by a timeout stay "processing" forever otherwise
 export async function releaseStaleJobs(payload: Payload) {
   await payload.update({
     collection: 'payload-jobs',

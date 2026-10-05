@@ -1,6 +1,6 @@
 import { Inter, Prata } from 'next/font/google'
 
-// Prata stands in for the designs' display serifs (Moneta / Italiana), which lack Cyrillic
+// The design fonts lack Cyrillic
 export const prata = Prata({
   weight: '400',
   subsets: ['latin', 'cyrillic'],

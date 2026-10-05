@@ -202,12 +202,11 @@ export async function seed(payload: Payload) {
   })
 }
 
-// Removes catalog content; admins and media are kept
 export async function clearCatalog(payload: Payload) {
   for (const collection of ['products', 'pages', 'product-collections'] as const) {
     await payload.delete({ collection, where: { id: { exists: true } } })
   }
-  // Children first so parent references don't block deletion
+  // Children first: parent references block deletion
   await payload.delete({ collection: 'categories', where: { parent: { exists: true } } })
   await payload.delete({ collection: 'categories', where: { id: { exists: true } } })
 }

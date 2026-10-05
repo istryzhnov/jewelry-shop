@@ -15,7 +15,6 @@ type FeatureProps = {
   imageSide: 'left' | 'right'
 }
 
-// Design A's "Gift Guides" / "Fine Jewelry" blocks: arched photo with an offset outline
 export function Feature({ eyebrow, title, text, href, image, tone, imageSide }: FeatureProps) {
   const dark = tone === 'forest'
   return (

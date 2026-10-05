@@ -23,7 +23,6 @@ export function parseCatalogParams(params: SearchParams): ProductFilters {
   }
 }
 
-// Builds a URL keeping current filters, with some values replaced or removed
 export function withParams(
   path: string,
   params: SearchParams,

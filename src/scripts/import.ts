@@ -6,8 +6,8 @@ import { archiveMissing, planImport, TaxonomyCache, upsertRow } from '@/import/a
 import { parsePriceList } from '@/import/parsePriceList'
 import { syncAndRecordPhotos } from '@/import/syncPhotos'
 
-// Usage: npm run import -- <file.xlsx> [apply] [no-photos] [photo-limit=N]
-// (`payload run` forwards only positional arguments, so options have no dashes)
+// npm run import -- <file.xlsx> [apply] [no-photos] [photo-limit=N]
+// `payload run` forwards only positional args, so options have no dashes
 const args = process.argv.slice(2)
 const file = args.find((a) => a.endsWith('.xlsx'))
 const shouldApply = args.includes('apply')

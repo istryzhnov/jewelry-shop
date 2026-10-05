@@ -24,7 +24,6 @@ const jpeg = await sharp({
 
 const downloads: string[] = []
 
-// Fake Google Drive: folder listing HTML and image downloads
 const fetcher = async (url: string) => {
   if (url.includes('embeddedfolderview')) {
     return new Response(folder.map((f) => entry(f.id, f.name, f.mime)).join(''), { status: 200 })
