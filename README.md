@@ -32,6 +32,13 @@ npm run import -- "прайс.xlsx" apply photo-limit=5
 
 Роздрібна ціна = закупівельна × (1 + націнка %) з округленням вгору — **Налаштування → Націнка**.
 
+## SEO й аналітика
+
+- Поки `SITE_INDEXABLE` не `true`, сайт закритий від пошуковиків (`robots.txt` + `noindex`). Вмикати після підключення домену.
+- `/sitemap.xml` — карта сайту; `/feed.xml` — фід товарів для Google Merchant Center і Meta Catalog.
+- GA4 і Meta Pixel: ID в **Налаштування → Аналітика**. Теги вантажаться лише після згоди відвідувача в банері cookie.
+  Події: `view_item`, `view_item_list`, `search`, `generate_lead` (клік «Замовити в Instagram»; у Pixel — `Contact`).
+
 ## Тести
 
 ```sh
