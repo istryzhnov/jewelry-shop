@@ -3,6 +3,7 @@ import { Suspense } from 'react'
 import { getCategories, getProducts, type ProductFilters } from '@/lib/catalog'
 import type { SearchParams } from '@/lib/searchParams'
 
+import { TrackEvent } from '../../analytics/TrackEvent'
 import { ProductGrid } from '../ProductCard'
 import { Filters } from './Filters'
 import { Pagination } from './Pagination'
@@ -18,7 +19,6 @@ type Props = {
   children?: React.ReactNode
 }
 
-// Design B's catalog: title, "Filters" and "Sort by" bar, product grid
 export async function CatalogView({
   title,
   description,
@@ -32,6 +32,18 @@ export async function CatalogView({
 
   return (
     <div className="container-page pt-6">
+      <TrackEvent
+        event="view_item_list"
+        params={{
+          item_list_name: title,
+          items: result.docs.slice(0, 20).map((p) => ({
+            item_id: p.variants?.[0]?.sku ?? p.slug,
+            item_name: p.name,
+            price: p.minPrice,
+          })),
+        }}
+      />
+      {filters.q && <TrackEvent event="search" params={{ search_term: filters.q }} />}
       <h1 className="font-display text-4xl sm:text-5xl">{title}</h1>
       {description && <p className="mt-3 max-w-2xl text-muted">{description}</p>}
       {children}
@@ -51,6 +63,7 @@ export async function CatalogView({
         </div>
       </div>
       <div className="mt-8">
+        <h2 className="sr-only">Товари</h2>
         {result.docs.length ? (
           <ProductGrid products={result.docs} prioritizeFirst={4} />
         ) : (
