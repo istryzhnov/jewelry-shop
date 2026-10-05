@@ -6,7 +6,6 @@ import type { Media } from '@/payload-types'
 
 import { ProductImage } from '../ProductImage'
 
-// Design B: vertical thumbnails beside a large photo; swipeable strip on mobile
 export function Gallery({ images, name }: { images: Media[]; name: string }) {
   const [active, setActive] = useState(0)
 

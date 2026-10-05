@@ -10,7 +10,7 @@ export const slug = (useAsSlug = 'name') =>
       const [, slugInput] = field.fields
       if (slugInput?.type === 'text') {
         slugInput.label = 'Адреса (slug)'
-        // Built-in generation runs after validation, so API/import creates without a slug would fail
+        // Built-in generation runs after validation, which breaks API creates
         slugInput.hooks = {
           ...slugInput.hooks,
           beforeValidate: [

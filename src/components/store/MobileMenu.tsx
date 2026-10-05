@@ -18,7 +18,6 @@ export function MobileMenu({
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
 
-  // Close on navigation
   const [lastPath, setLastPath] = useState(pathname)
   if (lastPath !== pathname) {
     setLastPath(pathname)

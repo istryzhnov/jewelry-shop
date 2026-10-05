@@ -13,7 +13,7 @@ function read(): string[] {
   }
 }
 
-// Cached snapshot keeps useSyncExternalStore from looping on a fresh array each call
+// Stable snapshot, otherwise useSyncExternalStore loops
 let snapshot: string[] = []
 let raw: string | null = null
 function getSnapshot() {

@@ -40,13 +40,12 @@ test.describe('Admin Panel', () => {
   })
 
   test('shows seeded products with variant labels', async () => {
-    // Cold dev-mode compilation of list and edit views can take over 30s
+    // Cold dev compilation can exceed 30s
     test.setTimeout(120_000)
-    // The catalog may hold the imported price list, so narrow the list to the seeded product
     await page.goto('http://localhost:3000/admin/collections/products?search=Тонка')
     await expect(page.locator('h1', { hasText: 'Товари' }).first()).toBeVisible()
 
-    // The list view rewrites its URL after hydration, which would cancel an earlier click
+    // The list view rewrites its URL after hydration and cancels earlier clicks
     await page.waitForURL(/limit=/)
     await page.getByRole('link', { name: 'Срібна каблучка «Тонка лінія»' }).click()
     await page.waitForURL(/\/admin\/collections\/products\/\d+/, { timeout: 60_000 })

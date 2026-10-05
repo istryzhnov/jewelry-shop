@@ -44,7 +44,7 @@ export default buildConfig({
   jobs: {
     tasks: [importRowsTask, syncPhotosTask],
     deleteJobOnComplete: true,
-    // In-process runner for long-lived servers (local dev); serverless relies on the scheduled function
+    // Local dev only; on Netlify a scheduled function runs the jobs
     autoRun: [
       { cron: '*/10 * * * * *', queue: QUEUES.import, limit: 1 },
       { cron: '*/10 * * * * *', queue: QUEUES.photos, limit: 3 },
@@ -65,7 +65,6 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URL || '',
     },
-    // Locally the schema is pushed automatically; in production only migrations are applied
     push: process.env.NODE_ENV !== 'production',
     migrationDir: path.resolve(dirname, 'migrations'),
     prodMigrations: migrations,
@@ -79,7 +78,7 @@ export default buildConfig({
       generateDescription: ({ doc }) =>
         typeof doc?.description === 'string' ? doc.description : '',
     }),
-    // Media goes to Cloudflare R2 when configured; otherwise stored on local disk (dev only)
+    // Cloudflare R2 when configured, local disk otherwise
     s3Storage({
       enabled: Boolean(process.env.S3_BUCKET),
       collections: { media: true, 'import-runs': { prefix: 'imports' } },

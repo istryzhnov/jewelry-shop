@@ -5,7 +5,6 @@ import { parsePrice, parsePriceList, splitArticles } from '@/import/parsePriceLi
 
 const FOLDER = 'https://drive.google.com/drive/folders/abc123'
 
-// Mirrors the supplier layout: a multi-type block, then per-category blocks side by side
 function buildWorkbook() {
   const wb = new ExcelJS.Workbook()
   const ws = wb.addWorksheet('Лист1')

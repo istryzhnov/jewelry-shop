@@ -14,7 +14,6 @@ type Props = {
   activeCategory?: string
 }
 
-// Plain GET form: works without JavaScript and keeps filters in the URL
 export function Filters({ path, params, filters, categories, activeCategory }: Props) {
   const active = [filters.minPrice, filters.maxPrice, filters.inStock].filter(Boolean).length
   const topLevel = categories.filter((c) => !c.parent)

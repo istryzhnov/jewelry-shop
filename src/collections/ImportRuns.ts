@@ -8,7 +8,7 @@ import { emptyResults, QUEUES } from '@/jobs'
 
 const XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 
-// Parses the uploaded file and stores a dry-run report; nothing in the catalog changes yet
+// Dry run on upload; the catalog changes only after "apply"
 const buildPreview: CollectionBeforeChangeHook = async ({ data, operation, req }) => {
   if (operation !== 'create' || !req.file?.data) return data
   const workbook = new ExcelJS.Workbook()
@@ -25,7 +25,6 @@ const buildPreview: CollectionBeforeChangeHook = async ({ data, operation, req }
   }
 }
 
-// Time a single request may spend on import work before the scheduled runner takes over
 const INLINE_BUDGET_MS = 7000
 
 const apply: Endpoint = {
@@ -88,7 +87,6 @@ export const ImportRuns: CollectionConfig = {
         { label: 'Виконується', value: 'running' },
         { label: 'Готово', value: 'done' },
       ],
-      // Shown as a list column; the report above shows the live status
       admin: { readOnly: true, condition: () => false },
     },
     { name: 'processed', type: 'number', defaultValue: 0, admin: { hidden: true } },

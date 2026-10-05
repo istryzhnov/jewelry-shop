@@ -5,7 +5,7 @@ import type { Category, Page, Product, ProductCollection } from '@/payload-types
 
 import { payloadClient } from './payload'
 
-// Storefront reads always go through access control: published docs only, no cost prices
+// Access control hides drafts and cost prices from the storefront
 const PUBLIC = { overrideAccess: false } as const
 
 export const PAGE_SIZE = 24
@@ -32,7 +32,6 @@ export type ProductFilters = {
   withImages?: boolean
 }
 
-// Fields a product card needs; keeps list queries light
 const CARD_SELECT = {
   name: true,
   slug: true,
@@ -105,7 +104,6 @@ export const getCollectionBySlug = cache(async (slug: string) => {
   return collections.find((c) => c.slug === slug) ?? null
 })
 
-// A category page also lists products of its subcategories
 async function categoryIds(id: number) {
   const categories = await getCategories()
   return [

@@ -23,7 +23,7 @@ export const Media: CollectionConfig = {
   ],
   upload: {
     mimeTypes: ['image/*'],
-    // Original doubles as the large image on product pages; every size is WebP to keep pages light
+    // Original doubles as the large image; all sizes are WebP
     resizeOptions: { width: 1600, height: 1600, fit: 'inside', withoutEnlargement: true },
     formatOptions: { format: 'webp', options: { quality: 80 } },
     imageSizes: [

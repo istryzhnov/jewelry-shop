@@ -1,7 +1,6 @@
 import { expect, test } from '@playwright/test'
 
 // Relies on the sample catalog from `npm run seed`
-// Interactive tests wait for network idle so clicks land after hydration
 const PRODUCT = '/product/sribna-kabluchka-tonka-liniia'
 
 test('homepage shows hero and ordering steps', async ({ page }) => {

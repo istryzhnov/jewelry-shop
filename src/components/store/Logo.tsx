@@ -1,6 +1,5 @@
 import Link from 'next/link'
 
-// Monogram badge in the spirit of design A's round logo
 export function Logo({ name, className = '' }: { name: string; className?: string }) {
   const initials = name
     .split(/\s+/)

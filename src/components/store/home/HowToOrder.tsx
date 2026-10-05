@@ -13,7 +13,6 @@ const STEPS = [
   },
 ]
 
-// Replaces design A's "Best Material" block: ordering happens in Instagram Direct
 export function HowToOrder() {
   return (
     <section className="container-page py-20 lg:py-24">
